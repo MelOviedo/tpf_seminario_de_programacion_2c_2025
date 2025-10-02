@@ -1,0 +1,13 @@
+#editors
+.vscode/
+
+# Virtual environments
+venv/
+ENV/
+env/
+.env/
+.venv/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
