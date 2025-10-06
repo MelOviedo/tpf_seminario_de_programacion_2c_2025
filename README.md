@@ -162,10 +162,3 @@ python -m src.demo.main div --bits 4 --A 0b1110 --B 0b0011
 - Murata, Peterson, Reisig & Rozenberg (referencias clásicas sobre RdP).
 
 ---
-
-Si querés, puedo además:
-
-- Añadir un `requirements.txt` mínimo y el esqueleto de `src/` con stubs para las clases mencionadas.
-- Implementar el motor RdP básico y un example runner para suma de 4 bits.
-
-Decime cuál de estas tareas preferís que haga a continuación.
