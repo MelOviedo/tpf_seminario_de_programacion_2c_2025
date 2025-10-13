@@ -47,13 +47,11 @@ def main():
 
     elif args.cmd == 'mul':
         value, net = rdp_mul(args.A, args.B, args.bits)  # <-- usa alias
+        total = 2 * args.bits
         print(f'[MUL] A={bin(args.A)}  B={bin(args.B)}  bits={args.bits}')
         print(f'Resultado: {bin(value)}  ({value})  # usa 2*bits')
-        total = 2 * args.bits
-        print('ACC:', ' '.join(f'ACC_{j}={net.places[f"ACC_{j}"].tokens}' for j in range(total)))
-        if args.trace:
-            print(f'[trace] {len(net.last_trace)} transiciones')
-            print(' → ' + ' | '.join(net.last_trace))
+        acc_bits = ' '.join(f'ACC_{j}={1 if (value >> j) & 1 else 0}' for j in range(total))
+        print('ACC:', acc_bits)
     else:
         parser.print_help()
 
