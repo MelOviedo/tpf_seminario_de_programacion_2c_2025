@@ -114,30 +114,55 @@ tests/
 
 ---
 
-## ▶️ Cómo ejecutar (ejemplos)
+## ▶️ Cómo ejecutar
 
-Usando Python 3.10+ (PowerShell):
+### 🔹 Modo básico (solo consola)
+
+Requiere Python 3.10+ y ejecutarse desde la raíz del repositorio. Cada comando imprime el resultado en texto:
 
 ```powershell
-# Suma (4 bits): 0b1011 + 0b0101 = 0b10000
+# Suma (4 bits): 0b1011 + 0b0101 → 0b10000
 python -m src.demo.main add --bits 4 --A 0b1011 --B 0b0101
 
-# Resta (4 bits) con complemento a dos
+# Resta (4 bits) usando complemento a dos
 python -m src.demo.main sub --bits 4 --A 0b1100 --B 0b0011 --mode two_complement
 
 # Multiplicación (4 bits)
 python -m src.demo.main mul --bits 4 --A 0b1011 --B 0b0011
 
-# División (4 bits): devuelve Q y R
+# División (4 bits): devuelve cociente (Q) y resto (R)
 python -m src.demo.main div --bits 4 --A 0b1110 --B 0b0011
 ```
 
----
+### 🔹 Modo con visualización (GIF)
 
-## 🧩 Utilidades planificadas
+Si además querés obtener la secuencia de disparos en formato GIF, usá el visualizador. Genera una carpeta con los fotogramas (`.png`) y un GIF animado por operación:
 
-- `src/arith/utils.py`: `encode_int_to_places`, `decode_places_to_int`.
-- Exportación a Graphviz/DOT para visualización.
+```powershell
+# Suma con visualización (crea out/add_11_5_b4.gif)
+python -m scripts.visualize add --bits 4 --A 0b1011 --B 0b0101 --outdir out
+
+# Resta (crea out/sub_12_3_b4.gif)
+python -m scripts.visualize sub --bits 4 --A 0b1100 --B 0b0011 --outdir out
+
+# Multiplicación (crea out/mul_11_3_b4_step*.gif por cada suma parcial)
+python -m scripts.visualize mul --bits 4 --A 0b1011 --B 0b0011 --outdir out
+
+# División (crea out/div_14_3_b4_step*.gif por cada resta aceptada)
+python -m scripts.visualize div --bits 4 --A 0b1110 --B 0b0011 --outdir out
+```
+
+> `--outdir` es opcional (por defecto `out/`). Podés usar `--prefix` para personalizar el nombre base de los archivos generados.
+
+### 🎞️ Ejemplos de ejecuciones
+
+| Operación | GIF |
+| --- | --- |
+| Suma (`0b1011 + 0b0101`) | ![Suma 4 bits](out/add_11_5_b4.gif) |
+| Resta (`0b1100 - 0b0011`) | ![Resta 4 bits](out/sub_12_3_b4.gif) |
+| Multiplicación (`0b1011 × 0b0011`, paso 0) | ![Multiplicación paso 0](out/mul_11_3_b4_step0.gif) |
+| Multiplicación (`0b1011 × 0b0011`, paso 1) | ![Multiplicación paso 1](out/mul_11_3_b4_step1.gif) |
+| División (`0b1110 ÷ 0b0011`, resta aceptada 0) | ![División paso 0](out/div_14_3_b4_step0.gif) |
 
 ---
 
