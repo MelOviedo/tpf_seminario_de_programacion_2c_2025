@@ -6,6 +6,7 @@ class PetriNet:
     self.name = name
     self.places = {}
     self.transitions = []
+    self.last_trace = []
 
   def add_place(self, name, capacity=1, tokens=0):
     if name in self.places:
@@ -36,4 +37,5 @@ class PetriNet:
       t.fire(self)
       fired.append(t.name)
       steps += 1
+    self.last_trace = fired
     return fired
