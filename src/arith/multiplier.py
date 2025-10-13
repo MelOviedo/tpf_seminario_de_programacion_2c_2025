@@ -6,14 +6,14 @@ def mul(A: int, B: int, n_bits: int):
   Resultado y carry viven en 2*n_bits (producto modular en ese ancho).
   Devuelve (producto, net_ultima_suma)
   """
-  total_bits = 2 * n_bits
-  acc = 0
+  total_bits = 2 * n_bits     # Para evitar overflow
+  acc = 0                     # Acumulador del producto donde se irá sumando el parcial
   last_net = None
 
   for i in range(n_bits):
     if (B >> i) & 1:
-      parcial = (A << i) & ((1 << total_bits) - 1)
-      acc, last_net = add(acc, parcial, total_bits)  # cada suma es una RdP independiente
+      parcial = (A << i) & ((1 << total_bits) - 1)    # Genera la suma parcial desplazada. Desplaza A i bits a la izquierda
+      acc, last_net = add(acc, parcial, total_bits)   # cada suma es una RdP independiente
 
   return acc, last_net
 
