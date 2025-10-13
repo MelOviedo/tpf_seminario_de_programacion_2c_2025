@@ -1,6 +1,6 @@
 #editors
 .vscode/
-
+.env
 # Virtual environments
 venv/
 ENV/
