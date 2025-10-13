@@ -1,8 +1,8 @@
 import argparse
-""" from html import parser """
-from ..arith.multiplier import mul as rdp_mul
 from ..arith.adder import add
 from ..arith.subtractor import subtract
+from ..arith.multiplier import mul as rdp_mul
+from ..arith.divider import divide as rdp_div
 
 def main():
     parser = argparse.ArgumentParser(description='Demo aritmética con Redes de Petri')
@@ -27,9 +27,15 @@ def main():
     p_mul.add_argument('--bits', type=int, required=True)
     p_mul.add_argument('--A', type=lambda x: int(x, 0), required=True)
     p_mul.add_argument('--B', type=lambda x: int(x, 0), required=True)
-    p_mul.add_argument('--trace', action='store_true', help='Imprimir transiciones disparadas')
+
+    # div
+    p_div = subparsers.add_parser('div', help='División binaria con RdP (A / B)')
+    p_div.add_argument('--bits', type=int, required=True)
+    p_div.add_argument('--A', type=lambda x: int(x, 0), required=True)
+    p_div.add_argument('--B', type=lambda x: int(x, 0), required=True)
 
     args = parser.parse_args()
+    print(f'[args] {args}', flush=True)
 
     if args.cmd == 'add':
         value, net = add(args.A, args.B, args.bits, carry_in=args.carry_in)
@@ -46,12 +52,21 @@ def main():
         print(f'carry_out=C_{args.bits}={net.places[f"C_{args.bits}"].tokens}  (borrow = NOT carry_out)')
 
     elif args.cmd == 'mul':
-        value, net = rdp_mul(args.A, args.B, args.bits)  # <-- usa alias
+        value, net = rdp_mul(args.A, args.B, args.bits)
         total = 2 * args.bits
         print(f'[MUL] A={bin(args.A)}  B={bin(args.B)}  bits={args.bits}')
         print(f'Resultado: {bin(value)}  ({value})  # usa 2*bits')
         acc_bits = ' '.join(f'ACC_{j}={1 if (value >> j) & 1 else 0}' for j in range(total))
         print('ACC:', acc_bits)
+
+    elif args.cmd == 'div':
+        try:
+            q, r, net = rdp_div(args.A, args.B, args.bits)
+        except ZeroDivisionError as e:
+            print('Error: división por cero')
+            return
+        print(f'[DIV] A={bin(args.A)}  B={bin(args.B)}  bits={args.bits}')
+        print(f'Q={bin(q)} ({q})  R={bin(r)} ({r})')
     else:
         parser.print_help()
 
