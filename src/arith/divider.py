@@ -39,3 +39,42 @@ def divide(A: int, B: int, n_bits: int):
 
   # R está en [0, B) garantizado
   return Q, R, last_net
+
+from .subtractor import subtract
+
+def divide_with_traces(A: int, B: int, n_bits: int):
+  """
+  Igual que divide(), pero devuelve además las nets de cada resta aceptada (R>=B).
+  """
+  if B == 0:
+    raise ZeroDivisionError('División por cero')
+
+  mask_n = (1 << n_bits) - 1
+  A &= mask_n
+  B &= mask_n
+
+  width = n_bits + 1
+  mask_w = (1 << width) - 1
+
+  Q = 0
+  R = 0
+  nets = []
+
+  for i in range(n_bits - 1, -1, -1):
+    bit = (A >> i) & 1
+    R = ((R << 1) | bit) & mask_w
+
+    val_mod, borrow, net = subtract(R, B, width)  # podés modificar subtract para aceptar record=True si querés
+    # Re-ejecutamos con record=True para obtener history:
+    from .subtractor import build_subtractor, encode_bits as enc, decode_sum as dec
+    net_rec = build_subtractor(width)
+    enc(net_rec, 'A', R, width)
+    enc(net_rec, 'B', B, width)
+    net_rec.run(record=True)
+
+    if borrow == 0:
+      R = val_mod
+      Q |= (1 << i)
+      nets.append(net_rec)  # guardamos solo las restas aceptadas
+
+  return Q, R, nets

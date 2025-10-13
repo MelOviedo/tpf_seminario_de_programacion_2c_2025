@@ -1,3 +1,4 @@
+# /src/petri/net.py
 from .place import Place
 from .transition import Transition
 
@@ -7,6 +8,8 @@ class PetriNet:
     self.places = {}
     self.transitions = []
     self.last_trace = []
+    self.initial_marking = None
+    self.history = []  # [{'fired': name, 'marking': {place:tokens}}, ...]
 
   def add_place(self, name, capacity=1, tokens=0):
     if name in self.places:
@@ -25,17 +28,26 @@ class PetriNet:
   def enabled_transitions(self):
     return [t for t in self.transitions if t.is_enabled(self)]
 
-  def run(self, max_steps=10_000):
+  def snapshot(self):
+    return {n: p.tokens for n, p in self.places.items()}
+
+  def run(self, max_steps=10_000, record=False):
     steps = 0
     fired = []
+    if record:
+      self.initial_marking = self.snapshot()
+      self.history = []
+
     while steps < max_steps:
       enabled = self.enabled_transitions()
       if not enabled:
         break
-      # política simple: tomar la primera habilitada
       t = enabled[0]
       t.fire(self)
       fired.append(t.name)
+      if record:
+        self.history.append({'fired': t.name, 'marking': self.snapshot()})
       steps += 1
+
     self.last_trace = fired
     return fired
